@@ -1,23 +1,18 @@
-import NextAuth, { NextAuthOptions, Session, User } from "next-auth";
+import NextAuth, { NextAuthOptions, Session } from "next-auth";
 import type { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-// Uncomment these lines if you want to use Prisma as your adapter.
-// import { PrismaClient } from "@prisma/client";
-// import { PrismaAdapter } from "@next-auth/prisma-adapter";
-// const prisma = new PrismaClient();
 
 export const authOptions: NextAuthOptions = {
     providers:[
         CredentialsProvider({
             name:"Credentials",
             credentials:{
-                email: { label: "Email", type: "text", placeholder: "you@example.com" },
+                email: { label: "Email", type: "text", placeholder: "devs@example.com" },
                 password: { label: "Password", type: "password" },
             },
             async authorize(credentials) {
-                // Replace with your own authentication logic.
-                const res = await fetch("https://your-backend.com/login", {
+                const res = await fetch("https:localhost:3000/signin", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -40,15 +35,13 @@ export const authOptions: NextAuthOptions = {
           }),
         
     ],
-    // Uncomment the next line if using Prisma.
-    // adapter: PrismaAdapter(prisma),
     session:{
         strategy: "jwt" as const
     },
     pages:{
-        signIn:"/"
+        signIn:"/signup"
     },callbacks:{
-        async jwt({ token, user, account }: { token: JWT; user?: User; account?: any }): Promise<JWT> {
+        async jwt({ token, user }): Promise<JWT> {
             if (user) {
                 token.id = user.id;
             }
