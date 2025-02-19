@@ -32,7 +32,7 @@ export default function SignInPage() {
       setError(result.error);
       setLoading(false);
     } else {
-      router.push("/dashboard"); // Redirect after successful login
+      router.push("/"); // Redirect after successful login
     }
   }
 
