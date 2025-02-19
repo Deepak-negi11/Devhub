@@ -31,7 +31,8 @@ const BlogDetails: React.FC = () => {
       };
       setBlogPost(fetchedPost);
     }
-  }, [router.query.id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.query]);
 
   const handleLike = () => {
     setLikes(likes + 1);

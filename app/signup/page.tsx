@@ -50,12 +50,12 @@ export default function Signup(){
             setLoading(false);
             
             router.push('/signin');
-        } catch(err) {
+        } catch {
             setError('An error occurred');
             setLoading(false);
         }
     }
-
+    
     return (
         <div className="min-h-screen w-screen flex items-center justify-center bg-gradient-to-r from-blue-600 to-black p-4">
             <motion.div
