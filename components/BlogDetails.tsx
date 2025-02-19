@@ -1,69 +1,81 @@
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-
-interface BlogPost{
-  id:number ;
-  title:string;
-  author:string;
-  date:string;
-  content:string
-
+interface BlogPost {
+  id: number;
+  title: string;
+  author: string;
+  date: string;
+  content: string;
 }
 
-const BlogDetails:React.FC = ()=>{
+const BlogDetails: React.FC = () => {
   const router = useRouter();
-  const {id} = router.query;
-  const [likes , setLikes ] = useState(0);
-  const [comments , setComments ] = useState<string[]>();
-  const [comment , setComment] = useState('');
 
+  const [likes, setLikes] = useState<number>(0);
+  const [comments, setComments] = useState<string[]>([]);
+  const [comment, setComment] = useState<string>('');
+  const [blogPost, setBlogPost] = useState<BlogPost | null>(null);
 
- const handleLike = ()=>{
-  setLikes(likes + 1)
- };
- const handleComment = () => {
-  setComments(comments ? [...comments, comment] : [comment]);
-  setComment('');
- };
+  useEffect(() => {
+    const { id } = router.query;
+    if (id) {
+      const idNum =
+        typeof id === "string" ? parseInt(id, 10) : parseInt((id as string[])[0], 10);
+      const fetchedPost: BlogPost = {
+        id: idNum,
+        title: `Blog Post ${idNum}`,
+        author: `Author ${idNum}`,
+        date: '2023-10-01',
+        content: `This is the content for blog post ${idNum}.`
+      };
+      setBlogPost(fetchedPost);
+    }
+  }, [router.query.id]);
 
+  const handleLike = () => {
+    setLikes(likes + 1);
+  };
 
- const blogPost:BlogPost = {
-  id: 1, title: 'Blog Post 1', author: 'Author 1', date: '2023-10-01', content: 'Content 1'
- }
+  const handleComment = () => {
+    if (comment.trim() === "") return;
+    setComments([...comments, comment]);
+    setComment('');
+  };
 
- return (
-  <div>
-    <h1 className = 'text-2xl font-bold '>
-      {blogPost.title}
-    </h1>
-    <p className="text-gray-600">
-      {blogPost.author} -{blogPost.date}
-    </p>
-    <div className = 'mt-4 flex space-x-4'>
-      <button onClick ={handleLike} className ="text-primary">
-        Like({likes})
-      </button>
-      <input
-      type = "text"
-      placeholder ="Add a comment"
-      value={comment}
-      onChange={(e)=> setComment(e.target.value)}
-      className ='px-4 py-2 border rounded'
-      >
-      </input>
-      <button onClick = {handleComment} className = "text-primary">\
-        Comment
-      </button>
+  if (!blogPost) {
+    return <p>Loading...</p>;
+  }
+
+  return (
+    <div>
+      <h1 className='text-2xl font-bold'>{blogPost.title}</h1>
+      <p className="text-gray-600">
+        {blogPost.author} - {blogPost.date}
+      </p>
+      <p className="mt-4">{blogPost.content}</p>
+      <div className='mt-4 flex space-x-4'>
+        <button onClick={handleLike} className="text-primary">
+          Like({likes})
+        </button>
+        <input
+          type="text"
+          placeholder="Add a comment"
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          className='px-4 py-2 border rounded'
+        />
+        <button onClick={handleComment} className="text-primary">
+          Comment
+        </button>
+      </div>
       <div className="mt-4">
-        {comments && comments.map((comment, index) => (
-          <p key={index} className="text-gray-600">{comment}</p>
+        {comments.map((c, index) => (
+          <p key={index} className="text-gray-600">{c}</p>
         ))}
       </div>
-
     </div>
-
-  </div>
-)}
+  );
+};
 
 export default BlogDetails;
